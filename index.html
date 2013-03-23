@@ -24,10 +24,6 @@
         ul {
             list-style-type: square;
         }
-        .wrapping {
-           word-wrap: break-word;
-        }
-
         /* table */
         table {
             font-size: 14px;
@@ -36,7 +32,6 @@
             text-transform: uppercase;
             background: #efefef;
         }
-
         tr:hover { 
             background-color: #fff380;
         }
@@ -51,6 +46,7 @@
         }
         a {
             text-decoration: none;
+            border-bottom: dotted thin #767667;
         }
         .secondary {
             font-size: 12px;
@@ -75,14 +71,19 @@
         .bold {
             font-weight: bold;
         }
+        .note {
+            padding: 8px;
+            background: #efefef;
+        }
     </style>
 </head>
 <body>
     <div class="wrap" role="main" id="main">
         <div class="grids">
+
             <div class="grid-12">
-                    <span class="appname"><a href="">elfenbein</a></span>
-                    <span style="float: right" class="errors" data-bind="text: errors"></span>
+                <span class="appname"><a href="">elfenbein</a></span>
+                <span style="float: right" class="errors" data-bind="text: errors"></span>
                 <input data-bind="value: q, valueUpdate: 'afterkeydown'" 
                     type="text" name="q" id="q" placeholder="s: p: and o:" autocomplete="off" />
                 <p class="secondary">
@@ -118,6 +119,29 @@
                 </table>
             </div>
 
+            <div id="notes">
+            <div class="grid-4">
+                <div class="note">
+                <p>
+                    I haven't gotten to the problem yet. As Pat Hayes points out, the problem is most clearly exposed by blank 
+                    nodes. Blank nodes are parts of a knowledge representation that don't have global identity; they're put in as 
+                    a kind of glue that connects parts of a fact. Via <a href="http://go-to-hellman.blogspot.de/2009/11/blank-node-bother-and-rdf-copymess.html">http://go-to-hellman.blogspot.de/2009/11/blank-node-bother-and-rdf-copymess.html</a>.</p>
+                </div>
+            </div>
+
+            <div class="grid-4">
+                <div class="note">
+                <p>If you see gibberish in the subject or object, it might be <a href="http://milicicvuk.com/blog/2011/07/14/problems-of-the-rdf-model-blank-nodes/">blank node</a>. </p>
+                </div>
+            </div>
+            <div class="grid-4">
+                <div class="note">
+                <p>There are no alternatives to the Semantic Web. Or are <a href="http://www-cdr.stanford.edu/~petrie/online/peer2peer/semanticscripts.pdf">there</a>?
+                </p>
+                </div>
+            </div>
+            </div>
+
         </div>
     </div>
     <script src="js/jquery-1.9.1.js"></script>
@@ -125,14 +149,14 @@
     <script>
 
         function throttle(fn, delay) {
-          var timer = null;
-          return function () {
-            var context = this, args = arguments;
-            clearTimeout(timer);
-            timer = setTimeout(function () {
-              fn.apply(context, args);
-            }, delay);
-          };
+            var timer = null;
+            return function () {
+                var context = this, args = arguments;
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                    fn.apply(context, args);
+                }, delay);
+            };
         }    
 
         $("#q").focus();
@@ -160,44 +184,33 @@
                 { url: "http://www.w3.org/2000/01/rdf-schema#", abbr: "rdfs:"},
                 { url: "http://dbpedia.org/resource/", abbr: "dbpedia:"},
                 { url: "http://xmlns.com/foaf/0.1/", abbr: "foaf:"},
+                { url: "http://xmlns.com/foaf/corp#", abbr: "foafcorp:" },
                 { url: "http://dbpedia.org/ontology/", abbr: "dbo:"},
                 { url: "http://dbpedia.org/property/", abbr: "dbprop:"},
                 { url: "http://www.w3.org/2002/07/owl#", abbr: "owl:"},
                 { url: "http://schema.org/", abbr: "schema:"},
-                
                 { url: "http://purl.org/dc/elements/1.1/", abbr: "dc:"},
-                { url: "http://www.w3.org/2004/02/skos/core#", abbr: "skos:"}
+                { url: "http://www.w3.org/2004/02/skos/core#", abbr: "skos:"},
+                { url: "http://www.rdfabout.com/rdf/schema/ussec/", abbr: "ussec:"},
+                { url: "http://www.w3.org/2001/vcard-rdf/3.0#", abbr: "vcard:"}
             ];
 
-            self.ho = ko.computed(function() {
+            // humanize a full url along the namespaces table
+            var humanizer = function(ugly) {
+                var result = ugly;
                 for (var i = 0; i < namespaces.length; i++) {
                     var pattern = new RegExp("^" + namespaces[i].url);
-                    if (self.o().match(pattern)) {
-                        return self.o().replace(namespaces[i].url, namespaces[i].abbr);
+                    if (ugly.match(pattern)) {
+                        result = ugly.replace(namespaces[i].url, namespaces[i].abbr);
+                        break;
                     }
                 }
-                return self.o();         
-            });
+                return result;
+            }
 
-            self.hs = ko.computed(function() {
-                for (var i = 0; i < namespaces.length; i++) {
-                    var pattern = new RegExp("^" + namespaces[i].url);
-                    if (self.s().match(pattern)) {
-                        return self.s().replace(namespaces[i].url, namespaces[i].abbr);
-                    }
-                }
-                return self.s();         
-            });
-
-            self.hp = ko.computed(function() {
-                for (var i = 0; i < namespaces.length; i++) {
-                    var pattern = new RegExp("^" + namespaces[i].url);
-                    if (self.p().match(pattern)) {
-                        return self.p().replace(namespaces[i].url, namespaces[i].abbr);
-                    }
-                }
-                return self.p();         
-            });
+            self.ho = humanizer(self.o());
+            self.hp = humanizer(self.p());
+            self.hs = humanizer(self.s());
 
         }
 
@@ -206,7 +219,7 @@
 
             self.errors = ko.observable("");
 
-            self.q = ko.observable("").extend({ throttle: 500 });
+            self.q = ko.observable("").extend({ throttle: 400 });
             self.response = ko.observable("");
             self.triples = ko.observableArray([]);
 
@@ -227,10 +240,13 @@
             });
 
             self.q.subscribe(function(newValue) {
-                if (newValue == "") {
+                self.errors("");
+
+                if (newValue.length == 0) {
                     newValue = "*";
                 }
-                self.errors("");
+
+                // specials
                 if (newValue.lastIndexOf("#", 0) === 0) {
                     if (newValue.lastIndexOf("#img", 0) === 0) {
                         var tag = newValue.replace("#img", "");
@@ -244,14 +260,16 @@
                             },
                             dataType: 'jsonp'
                         }, function(data) {
-                            console.log("on success. " + data);
+                            // console.log("on success. " + data);
                         });                        
                     }
-                } else {
+                } else { // the search ...
                     $("#results-table").show();
                     $("#stage").hide();
+                    $("#notes").hide();
+
                     self.errors("searching...");
-                    $.getJSON(es + "/_search?q=" + newValue, {"from" : 0, "size" : 250 }, function(allData) {
+                    $.getJSON(es + "/_search?q=" + newValue, { "from" : 0, "size" : 250 }, function(allData) {
                         self.response(allData);
                         var mappedTriples = $.map(allData.hits.hits, function(item) { 
                             return new Triple(item['_source']); 
