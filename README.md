@@ -16,3 +16,12 @@ Screenshots
 -----------
 
 [http://imgur.com/a/jxnSZ](http://imgur.com/a/jxnSZ)
+
+
+Remarks
+-------
+
+As long as the data does not contain to many blank nodes, this prototype
+is ok, because you can find your data within seconds (with datasets in the 
+order of millions of triples). With blank nodes, the tabular structure
+breaks down.
