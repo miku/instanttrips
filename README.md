@@ -17,6 +17,8 @@ Screenshots
 
 [http://imgur.com/a/jxnSZ](http://imgur.com/a/jxnSZ)
 
+![http://i.imgur.com/BYmqDZC.png](http://i.imgur.com/BYmqDZC.png)
+
 
 Remarks
 -------
