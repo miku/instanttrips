@@ -1,7 +1,7 @@
 README
 ======
 
-Instanttrips is an instant-ish interface too an elasticsearch based
+Instanttrips is an instant-ish interface to an elasticsearch based
 SPO (subject-predicate-object) index. An SPO index can be seen
 as a *very* stripped down triple-store. In fact, the documents that get
 pushed to the index looks just like this:
